@@ -1,22 +1,24 @@
 #include "matrix.cpp"
 #include <fstream>
-#include <string>
 #include <sstream>
+#include<time.h>
+#include<cstdlib>
+
 
 class Network
 {
 public:
-    vector<Matrix<double> > weightMatrices;
-    vector<Matrix<double> > biasMatrices;
-    vector<Matrix<double> > valueMatrices;
-    vector<int> topology;
+    std::vector<Matrix<double> > weightMatrices;
+    std::vector<Matrix<double> > biasMatrices;
+    std::vector<Matrix<double> > valueMatrices;
+    std::vector<int> topology;
     float learningRate;
 
 public:
-    Network(vector<int> _topology, float l_Rate);
-    void feedForward(vector<double> inputs);
-    void backPropogate(vector<double> target);
-    vector<vector<float> > getPredictions();
+    Network(std::vector<int> _topology, float l_Rate);
+    void feedForward(std::vector<double> inputs);
+    void backPropogate(std::vector<double> target);
+    std::vector<std::vector<float> > getPredictions();
       double m_error;
     double m_recentAverageError;
     static double m_recentAverageSmoothingFactor;
@@ -25,10 +27,11 @@ double Network::m_recentAverageSmoothingFactor=100.0;
 
 double randomValueGenerator()
 {
+    srand(time(0));
     return rand() / double(RAND_MAX);
 }
 
-Network::Network(vector<int> _topology, float l_Rate)
+Network::Network(std::vector<int> _topology, float l_Rate)
 {
 
     this->learningRate = l_Rate;
@@ -60,13 +63,13 @@ Network::Network(vector<int> _topology, float l_Rate)
     }
     valueMatrices.resize(topology.size());
 }
-void Network::feedForward(vector<double> inputs)
+void Network::feedForward(std::vector<double> inputs)
 {
     if (inputs.size() != this->topology.at(0))
     {
-        cout << "Invalid no. of inputs\n";
-        cout << "There are currently " << this->topology.at(0) << " Neurons in input layer\n";
-        cout << "input is: " << inputs.size() << endl;
+        std::cout << "Invalid no. of inputs\n";
+        std::cout << "There are currently " << this->topology.at(0) << " Neurons in input layer\n";
+        std::cout << "input is: " << inputs.size() << std::endl;
     }
     Matrix<double> inputLayer(1, inputs.size());
     for (int i = 0; i < inputs.size(); i++)
@@ -85,17 +88,17 @@ void Network::feedForward(vector<double> inputs)
             // 1x9  9x6 1x6
             inputLayer = inputLayer.multiply(weightMatrices[i]);
             inputLayer = inputLayer.add(biasMatrices[i]);
-            inputLayer._TANH();
+            inputLayer.sigmoid();
         }
     }
 }
 
-void Network::backPropogate(vector<double> target)
+void Network::backPropogate(std::vector<double> target)
 {
     if (target.size() != this->topology.back())
     {
-        cout << "Invalid no. of inputs\n";
-        cout << "There are currently " << this->topology.back() << " Neurons in output layer\n";
+        std::cout << "Invalid no. of inputs\n";
+        std::cout << "There are currently " << this->topology.back() << " Neurons in output layer\n";
     }
 
         m_error=0.0;
@@ -117,7 +120,7 @@ void Network::backPropogate(vector<double> target)
 
         Matrix<double> previousErrors = errorLayer.multiply(weightMatrices[i].transpose());
         // calculating output derivatice;
-        valueMatrices[i + 1].d_TANH();
+        valueMatrices[i + 1].derivatedSigmoid();
         Matrix<double> derivatedOutput = valueMatrices[i + 1];
         Matrix<double> gradient = errorLayer.multiplyElements(derivatedOutput);
         gradient = gradient.multiplyScalar(this->learningRate);
@@ -127,67 +130,5 @@ void Network::backPropogate(vector<double> target)
         errorLayer = previousErrors;
     }
 }
-
-// int main()
-// {
-//     // x,x,x,x,o,o,x,o,o,positive
-//     vector<vector<double> > data;
-//     ifstream file("test_data.data");
-//     if (file.is_open())
-//     {
-//         string s;
-//         while (getline(file, s))
-//         {
-//             vector<double> v;
-//             stringstream stream(s);
-//             string x;
-//             while (getline(stream, x, ','))
-//             {   double temp= double(stoi(x));
-//                 if(x=="2")
-//                     v.push_back(0.01);
-//                 else 
-//                     v.push_back(temp);
-//             }
-//             data.push_back(v);
-//         }
-//     }
-
-//     vector<int> topology;
-
-//     topology.push_back(9);
-//     topology.push_back(18);
-//     topology.push_back(9);
-//     topology.push_back(3);
-//     topology.push_back(1);
-
-
-//     Network net(topology, 0.05);
-
-
-//     vector<double> res;
-// for(int t=0;t<1000;t++){
-//     for (int i = 0; i < data.size(); i++)
-//     {
-
-//         vector<double> target;
-//         target.push_back(data[i].back());
-//         data[i].pop_back();
-
-//         net.feedForward(data[i]);
-//         net.backPropogate(target);
-//         cout<<"error : "<<net.m_recentAverageError<<endl;
-
-//            for (int k = 0; k < net.valueMatrices.back().get_rows(); k++)
-//     {
-//         for (int j = 0; j < net.valueMatrices.back().getCols(); j++)
-//             cout << net.valueMatrices.back().at(k, j) << " ";
-//         cout << endl;
-//     }
-//     }
-// }
-    
-
-//     //     net.feedForward(inp);
-//     std::cout << "training complete\n";
 
 
