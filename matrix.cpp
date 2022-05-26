@@ -4,6 +4,7 @@
 #include <vector>
 #include <cstdlib>
 
+
 template <typename x>
 class Matrix
 {
@@ -50,7 +51,7 @@ public:
     {
         if (col < 0 || row < 0)
         {
-            cout << "Invalid index!\n";
+            std::cout << "Invalid index!\n";
         }
 
         return matrix[row][col];
@@ -70,7 +71,7 @@ public:
     {
         if (this->_cols != mat._rows)
         {
-            cout << "Columns of first matrix is not equal to rows of second matrix.";
+            std::cout << "Columns of first matrix is not equal to rows of second matrix.";
         }
         Matrix product(_rows, mat._cols);
         for (int i = 0; i < product._rows; i++)
@@ -94,7 +95,7 @@ public:
     {
         if (_rows != mat._rows || _cols != mat._cols)
         {
-            cout <<_rows<<"x"<<_cols <<" != "<<mat._rows<<"x"<<mat._cols<<endl;
+            std::cout <<_rows<<"x"<<_cols <<" != "<<mat._rows<<"x"<<mat._cols<<std::endl;
 
         }
         Matrix output(_rows, _cols);
@@ -109,7 +110,7 @@ public:
         Matrix err(0, 0);
         if (_rows != mat._rows || _cols != mat._cols)
         {
-            cout << "The number of _rows or the number of _cols are not equal.";
+            std::cout << "The number of _rows or the number of _cols are not equal.";
             return err;
         }
         else
