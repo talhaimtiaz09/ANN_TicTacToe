@@ -4,20 +4,17 @@
 #define O -1.0
 #define _blank 0.01
 
-void screenClear()
-{
-	// Function to print 50 new empty lines to clear the scree/console
-	for (int i = 0; i < 50; i++)
-		std::cout << std::endl;
-}
+void gameOverCheck(bool &loop, TicTac gameBoard);
+void menu();
+void screenClear();
 
 int main()
 {
 
-	int choice;
-	double prob;
-	double min = RAND_MAX;
+	int choice, menuOption;
+	double probability,min;
 	int AImove;
+	bool loop;
 	TicTac gameBoard;
 	std::vector<double> test;
 	std::vector<int> topology;
@@ -33,109 +30,163 @@ int main()
 
 	while (true)
 	{
-		test.clear();
-		test.resize(0);
-		gameBoard.displayBoard();
+		loop = true;
+		gameBoard.clearBoard();
 
-		std::cout << "Enter your option: ";
-		std::cin >> choice;
-		while (gameBoard.isEmpty(choice - 1))
+		menu();
+		std::cin >> menuOption;
+
+		while (menuOption != 1 && menuOption != 2)
 		{
-			std::cout << "The cell is already filled\n";
-			std::cout << "Enter your options: ";
+			std::cout << "Please enter a valid option\n";
+			std::cin >> menuOption;
+		}
+		if (menuOption == 2)
+		{
+			std::cout << "Quiting...\n";
+			break;
+		}
+
+		while (loop)
+		{
+
+			test.clear();
+			test.resize(0);
+			gameBoard.displayBoard();
+
+			std::cout << "Enter your option: ";
 			std::cin >> choice;
-		}
-
-		switch (choice)
-		{
-		case 1:
-			gameBoard.setBoard(choice - 1) = X;
-			break;
-		case 2:
-			gameBoard.setBoard(choice - 1) = X;
-			break;
-		case 3:
-			gameBoard.setBoard(choice - 1) = X;
-			break;
-		case 4:
-			gameBoard.setBoard(choice - 1) = X;
-			break;
-		case 5:
-			gameBoard.setBoard(choice - 1) = X;
-			break;
-		case 6:
-			gameBoard.setBoard(choice - 1) = X;
-			break;
-		case 7:
-			gameBoard.setBoard(choice - 1) = X;
-			break;
-		case 8:
-			gameBoard.setBoard(choice - 1) = X;
-			break;
-		case 9:
-			gameBoard.setBoard(choice - 1) = X;
-			break;
-		}
-
-		screenClear();
-		gameBoard.displayBoard();
-
-		//coping all the board values into a temporary test vector
-		for (int i = 0; i < 3; i++)
-		{
-			for (int j = 0; j < 3; j++)
+			while (gameBoard.isEmpty(choice - 1))
 			{
-				test.push_back(gameBoard.at(i, j));
+				std::cout << "The cell is already filled\n";
+				std::cout << "Enter your options: ";
+				std::cin >> choice;
 			}
-		}
 
-		// Checking for game win/loss/draw!
-
-		if (gameBoard.evaluate() == X)
-		{
-			std::cout << "X won the game\n";
-			break;
-		}
-		else if (gameBoard.evaluate() == O)
-		{
-			std::cout << "O won the game\n";
-			break;
-		}
-		else if (gameBoard.draw())
-		{
-			std::cout << "\n------Game DRAW!------\n";
-			break;
-		}
-		/**
-		 * @brief
-		 * cell left and calulate the probability at each step
-		 * and then in the end make the best AImove possible
-		 * A test vector is used for this purpose and then after testing
-		 *changes are made to original boradGame vector
-		 */
-
-		for (int i = 0; i < 3; i++)
-		{
-			for (int j = 0; j < 3; j++)
+			switch (choice)
 			{
-				if (gameBoard.at(i, j) == _blank)
+			case 1:
+				gameBoard.setBoard(choice - 1) = X;
+				break;
+			case 2:
+				gameBoard.setBoard(choice - 1) = X;
+				break;
+			case 3:
+				gameBoard.setBoard(choice - 1) = X;
+				break;
+			case 4:
+				gameBoard.setBoard(choice - 1) = X;
+				break;
+			case 5:
+				gameBoard.setBoard(choice - 1) = X;
+				break;
+			case 6:
+				gameBoard.setBoard(choice - 1) = X;
+				break;
+			case 7:
+				gameBoard.setBoard(choice - 1) = X;
+				break;
+			case 8:
+				gameBoard.setBoard(choice - 1) = X;
+				break;
+			case 9:
+				gameBoard.setBoard(choice - 1) = X;
+				break;
+			}
+			gameOverCheck(loop, gameBoard);
+			if (loop)
+				screenClear();
+			gameBoard.displayBoard();
+
+			// coping all the board values into a temporary test vector
+			for (int i = 0; i < 3; i++)
+			{
+				for (int j = 0; j < 3; j++)
 				{
+					test.push_back(gameBoard.at(i, j));
+				}
+			}
 
-					test.at((i * 3) + j) = O;
-					net.feedForward(test);
-					prob = net.valueMatrices.back().at(0, 0);
-					test.at((i * 3) + j) = _blank;
-
-					if (min > prob)
+			/**
+			 * @brief
+			 * cell left and calulate the probabilityability at each step
+			 * and then in the end make the best AImove possible
+			 * A test vector is used for this purpose and then after testing
+			 *changes are made to original boradGame vector
+			 */
+			 min = RAND_MAX;
+			for (int i = 0; i < 3; i++)
+			{
+				for (int j = 0; j < 3; j++)
+				{
+					if (gameBoard.at(i, j) == _blank)
 					{
-						min = prob;
-						AImove = (i * 3) + j;
+
+						test.at((i * 3) + j) = O;
+						net.feedForward(test);
+						probability = net.valueMatrices.back().at(0, 0);
+						test.at((i * 3) + j) = _blank;
+
+						if (min > probability)
+						{
+							min = probability;
+							AImove = (i * 3) + j;
+						}
 					}
 				}
 			}
-		}
 
-		gameBoard.setBoard(AImove) = O;
-		screenClear();
+			gameBoard.setBoard(AImove) = O;
+			gameOverCheck(loop, gameBoard);
+			if (loop)
+				screenClear();
+		}
 	}
+}
+
+/********Funtions********/
+
+void screenClear()
+{
+	// Function to print 50 new empty lines to clear the scree/console
+	for (int i = 0; i < 50; i++)
+		std::cout << std::endl;
+}
+void gameOverCheck(bool &loop, TicTac gameBoard)
+{
+	// Checking for game win/loss/draw!
+
+	if (gameBoard.evaluate() == X)
+	{
+		screenClear();
+		gameBoard.displayBoard();
+		std::cout << "X won the game\n";
+		std::cout << "Do you want to play again?\n";
+		loop = false;
+	}
+	else if (gameBoard.evaluate() == O)
+	{
+		screenClear();
+		gameBoard.displayBoard();
+		std::cout << "O won the game\n";
+		std::cout << "Do you want to play again?\n";
+
+		loop = false;
+	}
+	else if (gameBoard.draw())
+	{
+		screenClear();
+		gameBoard.displayBoard();
+		std::cout << "\n------Game DRAW!------\n";
+		std::cout << "Do you want to play again?\n";
+
+		loop = false;
+	}
+}
+void menu()
+{
+	std::cout << "\n-------------------------------\n";
+	std::cout << "    Please Selcect your Option	 \n";
+	std::cout << "-------------------------------\n";
+	std::cout << "1.Play game\n2.Quit\n";
 }

@@ -3,6 +3,13 @@
 
 void train(Network &net){
 
+/*Network instance-net is passed by reference to ensure that
+original network also trains*/
+
+
+/*reading test data from file and saving it in data 
+and target vector with the help of string stream(delimiter)
+funtion*/
     std::vector<std::vector<double> > data;
 	std::ifstream file("test_data.data");
 	if (file.is_open())
@@ -29,6 +36,8 @@ void train(Network &net){
 
 
 	std::vector<double> res;
+
+	//vector to display flickering animation effect on console
     std::vector<std::string> trainingFlickering;
 	trainingFlickering.push_back("Training^*****");
 	trainingFlickering.push_back("Training*^****");
@@ -36,7 +45,14 @@ void train(Network &net){
 	trainingFlickering.push_back("Training***^**");
 	trainingFlickering.push_back("Training****^*");
 	trainingFlickering.push_back("Training*****^");
+	trainingFlickering.push_back("Training*****^");
+	trainingFlickering.push_back("Training****^*");
+	trainingFlickering.push_back("Training***^**");
+	trainingFlickering.push_back("Training**^***");
+	trainingFlickering.push_back("Training*^****");
+	trainingFlickering.push_back("Training^*****");
 
+//running feedforward and back propogate on dataset to train the network
 		for (int i = 0; i < data.size(); i++)
 		{
 
