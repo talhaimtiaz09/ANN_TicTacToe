@@ -9,7 +9,7 @@ class Network
 private:
     std::vector<Matrix> weightMatrices;
     std::vector<Matrix> biasMatrices;
-    std::vector<Matrix> valueMatrices;
+    std::vector<Matrix> neuronValues;
     std::vector<int> topology;
     float learningRate;
 
@@ -22,7 +22,8 @@ public:
 // returns output after feed forward
 double Network::getOutput()
 {
-    return valueMatrices.back().at(0, 0);
+    //as we have only one output neuron so it will be at (0,0)
+    return neuronValues.back().at(0, 0);
 }
 
 // function to generate a random value between 0 to 1
@@ -36,7 +37,7 @@ Network::Network(std::vector<int> _topology, float l_Rate)
 {
 
     this->learningRate = l_Rate;
-    valueMatrices.resize(topology.size());
+    neuronValues.resize(topology.size());
     // copying values of given vector into topology vector of this class
     for (int i = 0; i < _topology.size(); i++)
         this->topology.push_back(_topology.at(i));
@@ -65,7 +66,7 @@ Network::Network(std::vector<int> _topology, float l_Rate)
         biasMatrices.push_back(tempBiasMatrix);
     }
     // resizing value matrices to topology vector size
-    valueMatrices.resize(topology.size());
+    neuronValues.resize(topology.size());
 }
 // Feedforward function to calculate output on given inputs
 void Network::feedForward(std::vector<double> inputs)
@@ -75,6 +76,7 @@ void Network::feedForward(std::vector<double> inputs)
         std::cout << "Invalid no. of inputs\n";
         std::cout << "There are currently " << this->topology.front() << " Neurons in input layer\n";
         std::cout << "input is: " << inputs.size() << std::endl;
+        exit(0);
     }
     else
     {
@@ -88,10 +90,10 @@ void Network::feedForward(std::vector<double> inputs)
         {
 
             if (i == weightMatrices.size())
-                valueMatrices[i] = inputLayer;
+                neuronValues[i] = inputLayer;
             else
             {
-                valueMatrices[i] = inputLayer;
+                neuronValues[i] = inputLayer;
                 // 1x9  9x6 1x6
                 inputLayer = inputLayer.multiply(weightMatrices[i]);
                 inputLayer = inputLayer.add(biasMatrices[i]);
@@ -107,25 +109,27 @@ void Network::backPropogate(std::vector<double> target)
     {
         std::cout << "Invalid no. of inputs\n";
         std::cout << "There are currently " << this->topology.back() << " Neurons in output layer\n";
+        exit(0);
     }
     else
     {
 
         Matrix errorLayer(1, target.size());
         errorLayer._atrow(0) = target;
-        errorLayer = errorLayer.add(valueMatrices.back().negative());
+        errorLayer = errorLayer.add(neuronValues.back().negative());
 
         for (int i = weightMatrices.size() - 1; i >= 0; i--)
         {
 
             Matrix previousErrors = errorLayer.multiply(weightMatrices[i].transpose());
             // calculating output derivatice;
-            valueMatrices[i + 1].derivatedSigmoid();
-            Matrix derivatedOutput = valueMatrices[i + 1];
+            neuronValues[i + 1].derivatedSigmoid();
+            Matrix derivatedOutput = neuronValues[i + 1];
             Matrix gradient = errorLayer.multiplyElements(derivatedOutput);
             // multiplying learing rate with gradeint matrix
             gradient = gradient.multiplyScalar(this->learningRate);
-            Matrix weightGradient = valueMatrices[i].transpose().multiply(gradient);
+            Matrix weightGradient = neuronValues[i].transpose().multiply(gradient);
+
             biasMatrices[i] = biasMatrices[i].add(gradient);
             weightMatrices[i] = weightMatrices[i].add(weightGradient);
             errorLayer = previousErrors;

@@ -72,6 +72,7 @@ public:
         if (this->_cols != mat._rows)
         {
             std::cout << "Columns of first matrix is not equal to rows of second matrix.";
+            exit(0);
         }
         Matrix product(_rows, mat._cols);
         for (int i = 0; i < product._rows; i++)
@@ -96,6 +97,7 @@ public:
         if (_rows != mat._rows || _cols != mat._cols)
         {
           std::cout<<"Matrix shoudl be of same size and dimensions\n";
+          exit(0);
         }
         Matrix output(_rows, _cols);
         for (int i = 0; i < _rows; i++)
