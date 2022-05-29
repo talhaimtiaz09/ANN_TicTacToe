@@ -5,13 +5,13 @@
 #include <cstdlib>
 
 
-template <typename x>
+
 class Matrix
 {
 private:
     int _rows;
     int _cols;
-    std::vector<std::vector<x> > matrix;
+    std::vector<std::vector<double> > matrix;
 
 public:
     //constructor to maek matrix of desired size filled intially with 0
@@ -47,7 +47,7 @@ public:
             }
     }
     //return reference of element of matrix at particular (row,column) of template type
-    x &at(int row, int col)
+    double &at(int row, int col)
     {
         if (col < 0 || row < 0)
         {
@@ -95,8 +95,7 @@ public:
     {
         if (_rows != mat._rows || _cols != mat._cols)
         {
-            std::cout <<_rows<<"x"<<_cols <<" != "<<mat._rows<<"x"<<mat._cols<<std::endl;
-
+          std::cout<<"Matrix shoudl be of same size and dimensions\n";
         }
         Matrix output(_rows, _cols);
         for (int i = 0; i < _rows; i++)
@@ -123,7 +122,7 @@ public:
         }
     }
     /*function to multiply a provide scalar with each element of matrix*/
-    Matrix multiplyScalar(x scaleFactor)
+    Matrix multiplyScalar(double scaleFactor)
     {
         Matrix product(_rows, _cols);
         for (int i = 0; i < _rows; i++)
@@ -132,7 +131,7 @@ public:
         return product;
     }
     /*funciton to add a scalar to each element of matrix*/
-    Matrix addScalar(x scaleFactor)
+    Matrix addScalar(double scaleFactor)
     {
         Matrix sum(_rows, _cols);
         for (int i = 0; i < _rows; i++)
@@ -153,7 +152,7 @@ public:
     }
 
     /*returns reference of row of matrix at provided row index*/
-    std::vector<x> & _atrow(int row){
+    std::vector<double> & _atrow(int row){
      return matrix[row];
     }
 

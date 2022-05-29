@@ -1,29 +1,28 @@
 #include "trainNetwork.h"
 
-#define X 1.0
-#define O -1.0
-#define _blank 0.01
-
+//prototypes
 void gameOverCheck(bool &loop, TicTac gameBoard);
 void menu();
 void screenClear();
+void validOption(int &choice, int from, int to);
+
 
 int main()
 {
 
 	int choice, menuOption;
-	double probability,min;
+	double probability, min;
 	int AImove;
 	bool loop;
 	TicTac gameBoard;
 	std::vector<double> test;
 	std::vector<int> topology;
 	topology.push_back(9);
-	topology.push_back(18);
-	topology.push_back(18);
+	topology.push_back(36);
+	topology.push_back(36);
 	topology.push_back(1);
 
-	Network net(topology, 0.05);
+	Network net(topology, 0.1);
 	/*passing the network to training funciton for feedforward
 	back propogation*/
 	train(net);
@@ -36,11 +35,7 @@ int main()
 		menu();
 		std::cin >> menuOption;
 
-		while (menuOption != 1 && menuOption != 2)
-		{
-			std::cout << "Please enter a valid option\n";
-			std::cin >> menuOption;
-		}
+		validOption(menuOption, 1, 2);
 		if (menuOption == 2)
 		{
 			std::cout << "Quiting...\n";
@@ -56,11 +51,13 @@ int main()
 
 			std::cout << "Enter your option: ";
 			std::cin >> choice;
+			validOption(choice, 1, 9);
 			while (gameBoard.isEmpty(choice - 1))
 			{
 				std::cout << "The cell is already filled\n";
 				std::cout << "Enter your options: ";
 				std::cin >> choice;
+				validOption(choice, 1, 9);
 			}
 
 			switch (choice)
@@ -114,7 +111,7 @@ int main()
 			 * A test vector is used for this purpose and then after testing
 			 *changes are made to original boradGame vector
 			 */
-			 min = RAND_MAX;
+			min = RAND_MAX;
 			for (int i = 0; i < 3; i++)
 			{
 				for (int j = 0; j < 3; j++)
@@ -124,8 +121,10 @@ int main()
 
 						test.at((i * 3) + j) = O;
 						net.feedForward(test);
-						probability = net.valueMatrices.back().at(0, 0);
+						probability = net.getOutput();
 						test.at((i * 3) + j) = _blank;
+						//calculating the distance
+						probability=abs(probability-O);
 
 						if (min > probability)
 						{
@@ -136,8 +135,8 @@ int main()
 				}
 			}
 
-			gameBoard.setBoard(AImove) = O;
 			gameOverCheck(loop, gameBoard);
+			gameBoard.setBoard(AImove) = O;
 			if (loop)
 				screenClear();
 		}
@@ -189,4 +188,20 @@ void menu()
 	std::cout << "    Please Selcect your Option	 \n";
 	std::cout << "-------------------------------\n";
 	std::cout << "1.Play game\n2.Quit\n";
+}
+
+/**
+ * @brief
+ * function to accept input in the specified range
+ * choice->input to be checked
+ * from  ->Start of range
+ * to    ->end of range
+ */
+void validOption(int &input, int from, int to)
+{
+	while (input < from || input > to)
+	{
+		std::cout << "Please enter valid option form " << from << " to " << to << " : ";
+		std::cin >> input;
+	}
 }
