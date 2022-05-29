@@ -1,5 +1,7 @@
 #include "trainNetwork.h"
-
+/************************************/
+//Reg no.2021468, 2021578, 2021446
+/************************************/
 //prototypes
 void gameOverCheck(bool &loop, TicTac gameBoard);
 void menu();
